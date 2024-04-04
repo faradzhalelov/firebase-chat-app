@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class ChatView extends StatelessWidget {
-  const ChatView({super.key});
+class AuthView extends StatelessWidget {
+  const AuthView({super.key});
 
   @override
   Widget build(BuildContext context) {
