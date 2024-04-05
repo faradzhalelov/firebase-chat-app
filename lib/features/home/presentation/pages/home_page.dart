@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_chat_app/features/auth/application/auth_provider.dart';
 import 'package:firebase_chat_app/features/auth/presentation/pages/auth_page.dart';
-import 'package:firebase_chat_app/features/chat/presentation/pages/chat_page.dart';
+import 'package:firebase_chat_app/features/home/presentation/widgets/user_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -24,9 +24,9 @@ class HomePage extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text("Wellcome, $name."),
-              ElevatedButton(
-                  onPressed: () => context.go(ChatPage.routeLocation),
-                  child: const Text('CHAT')),
+              const Flexible(
+                child: UserListWidget(),
+              ),
               ElevatedButton(
                 onPressed: () async => _signOut(context),
                 child: const Text("Logout"),

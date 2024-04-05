@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-class AuthTextField extends StatelessWidget {
-  const AuthTextField(
+class AppTextField extends StatelessWidget {
+  const AppTextField(
       {super.key,
       required this.width,
       required this.height,
       required this.controller,
+      this.obscureText = false,
       this.inputFormatters,
       this.hintText});
   final double width;
   final double height;
+  final bool obscureText;
   final TextEditingController controller;
   final List<TextInputFormatter>? inputFormatters;
   final String? hintText;
@@ -22,6 +24,7 @@ class AuthTextField extends StatelessWidget {
       height: height,
       child: TextField(
         controller: controller,
+        obscureText: obscureText,
         inputFormatters: inputFormatters,
         decoration: InputDecoration(
             hintText: hintText,
