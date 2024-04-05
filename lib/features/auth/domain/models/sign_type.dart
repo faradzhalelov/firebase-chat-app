@@ -1,0 +1,1 @@
+enum SignType { signIn, signUp }

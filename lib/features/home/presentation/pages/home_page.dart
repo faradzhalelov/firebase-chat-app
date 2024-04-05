@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_chat_app/features/auth/application/auth_provider.dart';
+import 'package:firebase_chat_app/features/auth/presentation/pages/auth_page.dart';
 import 'package:firebase_chat_app/features/chat/presentation/pages/chat_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -12,8 +13,8 @@ class HomePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final name = ref.watch(authProvider.select(
-      (value) => value.valueOrNull?.displayName,
+    final String name = ref.watch(authProvider.select(
+      (value) => value.valueOrNull?.email ?? 'Unknown',
     ));
     return Scaffold(
       body: SafeArea(
@@ -27,9 +28,7 @@ class HomePage extends ConsumerWidget {
                   onPressed: () => context.go(ChatPage.routeLocation),
                   child: const Text('CHAT')),
               ElevatedButton(
-                onPressed: () async {
-                  await FirebaseAuth.instance.signOut();
-                },
+                onPressed: () async => _signOut(context),
                 child: const Text("Logout"),
               ),
             ],
@@ -38,4 +37,9 @@ class HomePage extends ConsumerWidget {
       ),
     );
   }
+
+  Future<void> _signOut(BuildContext context) async =>
+      await FirebaseAuth.instance
+          .signOut()
+          .then((value) => context.go(AuthPage.routeLocation));
 }

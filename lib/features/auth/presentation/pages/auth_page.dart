@@ -1,9 +1,14 @@
-import 'dart:developer';
-
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_chat_app/features/auth/application/auth_provider.dart';
+import 'package:firebase_chat_app/features/auth/application/auth_service.dart';
+import 'package:firebase_chat_app/features/auth/domain/models/sign_type.dart';
+import 'package:firebase_chat_app/features/chat/presentation/pages/chat_page.dart';
+import 'package:firebase_chat_app/utils/utils.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+
+import '../widgets/auth_text_field.dart';
 
 class AuthPage extends ConsumerStatefulWidget {
   const AuthPage({super.key});
@@ -36,6 +41,7 @@ class _AuthPageState extends ConsumerState<AuthPage> {
   Widget build(
     BuildContext context,
   ) {
+    final signType = ref.watch(signTypeProvider);
     return Scaffold(
       appBar: AppBar(),
       body: SafeArea(
@@ -44,30 +50,71 @@ class _AuthPageState extends ConsumerState<AuthPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const Text("AUTH Page"),
-              Text('EMAIL'),
-              SizedBox(
-                  width: 200,
-                  height: 50,
-                  child: TextField(
-                    controller: emailController,
-                  )),
-              Text('PASSWORD'),
-              SizedBox(
-                  width: 200,
-                  height: 50,
-                  child: TextField(
-                    controller: passwordController,
-                  )),
+              const Text("HELLO"),
+              kSBH10,
+              AuthTextField(
+                width: 300,
+                height: 50,
+                controller: emailController,
+                hintText: 'EMAIL',
+              ),
+              kSBH10,
+              AuthTextField(
+                width: 300,
+                height: 50,
+                controller: passwordController,
+                hintText: 'PASSWORD',
+              ),
+              kSBH10,
               ElevatedButton(
-                onPressed: () async {},
-                child: const Text("AUTH"),
+                onPressed: () async => await _sign(
+                    signType: signType,
+                    email: emailController.text,
+                    password: passwordController.text),
+                child: Text(_loginText(signType)),
+              ),
+              kSBH10,
+              ElevatedButton(
+                onPressed: () {
+                  _toogleSignType();
+                },
+                child: Text(_signText(signType)),
               ),
             ],
           ),
         ),
       ),
     );
+  }
+
+  Future<void> _sign(
+      {required SignType signType,
+      required String email,
+      required String password}) async {
+    final UserCredential? userCredential = await switch (signType) {
+      SignType.signUp => AuthService().signUp(email: email, password: password),
+      SignType.signIn => AuthService().signIn(email: email, password: password),
+    };
+    if (userCredential != null && context.mounted) {
+      context.go(ChatPage.routeLocation);
+    }
+  }
+
+  String _loginText(SignType signType) => switch (signType) {
+        SignType.signUp => 'SIGN UP',
+        SignType.signIn => 'SIGN IN',
+      };
+
+  String _signText(SignType signType) => switch (signType) {
+        SignType.signUp => 'GO TO SIGN IN',
+        SignType.signIn => 'GO TO SIGN UP',
+      };
+
+  void _toogleSignType() {
+    ref.read(signTypeProvider.notifier).update((state) => switch (state) {
+          SignType.signUp => SignType.signIn,
+          SignType.signIn => SignType.signUp,
+        });
   }
 }
 
